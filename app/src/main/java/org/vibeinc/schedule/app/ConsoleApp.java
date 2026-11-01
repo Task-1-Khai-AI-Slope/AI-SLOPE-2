@@ -147,7 +147,13 @@ public final class ConsoleApp {
     }
 
     private LocalDateTime askDateTime(String prompt) {
-        return LocalDateTime.parse(ask(prompt + " у форматі РРРР-ММ-ДД ГГ:ХХ"), Formats.DATE_TIME);
+        String value = ask(prompt + " у форматі РРРР-ММ-ДД ГГ:ХХ");
+        try {
+            return LocalDateTime.parse(value, Formats.DATE_TIME);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Некоректні дата й час \"" + value + "\", очікується формат РРРР-ММ-ДД ГГ:ХХ");
+        }
     }
 
     private int askInt(String prompt) {
