@@ -93,4 +93,28 @@ class DefaultScheduleTest {
         assertTrue(schedule.getLessons().isEmpty());
         assertThrows(EntityNotFoundException.class, () -> schedule.cancel(a));
     }
+
+    @Test
+    @DisplayName("TC-39 Розклад на дату містить лише заняття цього дня")
+    void lessonsOnDate() {
+        Lesson today = lesson(git, AT_10, "301");
+        Lesson todayLater = lesson(db, AT_10.plusHours(4), "302");
+        schedule.addLesson(lesson(web, AT_10.plusDays(1), "303"));
+        schedule.addLesson(todayLater);
+        schedule.addLesson(today);
+        assertEquals(List.of(today, todayLater), schedule.getLessonsOn(AT_10.toLocalDate()));
+        assertTrue(schedule.getLessonsOn(AT_10.toLocalDate().minusDays(1)).isEmpty());
+    }
+
+    @Test
+    @DisplayName("TC-40 Пошук занять з предмета не залежить від регістру назви")
+    void lessonsOfSubject() {
+        Lesson lecture = lesson(git, AT_10, "301");
+        Lesson nextLecture = lesson(git, AT_10.plusDays(7), "301");
+        schedule.addLesson(nextLecture);
+        schedule.addLesson(lesson(db, AT_10, "302"));
+        schedule.addLesson(lecture);
+        Subject sameName = new DefaultSubject("GIT", "Кузнецова Ю. А.", 4);
+        assertEquals(List.of(lecture, nextLecture), schedule.getLessonsOf(sameName));
+    }
 }
