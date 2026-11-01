@@ -3,6 +3,7 @@ package org.vibeinc.schedule.tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.vibeinc.schedule.app.DefaultSchedule;
 import org.vibeinc.schedule.app.DefaultScheduleManagementSystem;
 import org.vibeinc.schedule.core.DuplicateEntityException;
 import org.vibeinc.schedule.core.EntityNotFoundException;
@@ -24,7 +25,7 @@ class DefaultScheduleManagementSystemTest {
 
     @BeforeEach
     void setUp() {
-        system = new DefaultScheduleManagementSystem();
+        system = new DefaultScheduleManagementSystem(new DefaultSchedule());
         system.addSubject("Git", "Кузнецова Ю. А.", 4);
         system.addSubject("Бази даних", "Петренко О. І.", 5);
         system.registerStudent("KB-001", "Козир В. А.", "658п");

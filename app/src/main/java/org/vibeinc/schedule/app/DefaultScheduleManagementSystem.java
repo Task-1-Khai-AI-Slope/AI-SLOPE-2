@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
@@ -25,7 +26,11 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
     private final Map<String, Student> students = new LinkedHashMap<>();
     private final Map<String, Set<Subject>> enrollments = new LinkedHashMap<>();
     private final Map<String, Map<Subject, List<Integer>>> grades = new LinkedHashMap<>();
-    private final Schedule schedule = new DefaultSchedule();
+    private final Schedule schedule;
+
+    public DefaultScheduleManagementSystem(Schedule schedule) {
+        this.schedule = Objects.requireNonNull(schedule, "Розклад не задано");
+    }
 
     @Override
     public Subject addSubject(String name, String teacher, int credits) {

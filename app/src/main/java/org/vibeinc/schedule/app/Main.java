@@ -1,6 +1,7 @@
 package org.vibeinc.schedule.app;
 
 import org.vibeinc.schedule.core.LessonType;
+import org.vibeinc.schedule.core.Schedule;
 import org.vibeinc.schedule.core.ScheduleManagementSystem;
 
 import java.time.LocalDateTime;
@@ -13,11 +14,16 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        ScheduleManagementSystem system = new DefaultScheduleManagementSystem();
+        ScheduleManagementSystem system = createSystem();
         if (!Arrays.asList(args).contains("--empty")) {
             fillDemoData(system);
         }
         new ConsoleApp(system, new Scanner(System.in), System.out).run();
+    }
+
+    static ScheduleManagementSystem createSystem() {
+        Schedule schedule = new DefaultSchedule();
+        return new DefaultScheduleManagementSystem(schedule);
     }
 
     static void fillDemoData(ScheduleManagementSystem system) {

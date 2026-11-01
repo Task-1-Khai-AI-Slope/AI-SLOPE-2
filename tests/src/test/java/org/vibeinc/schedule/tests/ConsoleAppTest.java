@@ -3,6 +3,7 @@ package org.vibeinc.schedule.tests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.vibeinc.schedule.app.ConsoleApp;
+import org.vibeinc.schedule.app.DefaultSchedule;
 import org.vibeinc.schedule.app.DefaultScheduleManagementSystem;
 import org.vibeinc.schedule.core.ScheduleManagementSystem;
 
@@ -26,7 +27,7 @@ class ConsoleAppTest {
     @Test
     @DisplayName("TC-22 Додавання предмета через меню")
     void addSubjectViaMenu() {
-        ScheduleManagementSystem system = new DefaultScheduleManagementSystem();
+        ScheduleManagementSystem system = new DefaultScheduleManagementSystem(new DefaultSchedule());
         String output = run(system, "1\nGit\nКузнецова Ю. А.\n4\n0\n");
         assertTrue(output.contains("Додано предмет"));
         assertEquals(1, system.getSubjects().size());
@@ -35,7 +36,7 @@ class ConsoleAppTest {
     @Test
     @DisplayName("TC-23 Помилкове введення не завершує програму")
     void wrongInputDoesNotCrash() {
-        String output = run(new DefaultScheduleManagementSystem(),
+        String output = run(new DefaultScheduleManagementSystem(new DefaultSchedule()),
                 "1\nGit\nКузнецова Ю. А.\nчотири\n99\n0\n");
         assertTrue(output.contains("Помилка: Очікувалося ціле число"));
         assertTrue(output.contains("Невідомий пункт меню: 99"));
