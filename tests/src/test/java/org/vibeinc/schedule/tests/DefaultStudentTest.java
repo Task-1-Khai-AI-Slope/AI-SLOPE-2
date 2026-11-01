@@ -2,6 +2,8 @@ package org.vibeinc.schedule.tests;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.vibeinc.schedule.app.DefaultStudent;
 import org.vibeinc.schedule.core.Student;
 
@@ -20,12 +22,20 @@ class DefaultStudentTest {
         assertEquals("658п", student.getGroup());
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', nullValues = "null", value = {
+            "''     | Козир В. А. | 658п  | Поле \"Номер залікової книжки\" не може бути порожнім",
+            "null   | Козир В. А. | 658п  | Поле \"Номер залікової книжки\" не може бути порожнім",
+            "KB-001 | null        | 658п  | Поле \"ПІБ\" не може бути порожнім",
+            "KB-001 | '  '        | 658п  | Поле \"ПІБ\" не може бути порожнім",
+            "KB-001 | Козир В. А. | ' '   | Поле \"Група\" не може бути порожнім",
+            "KB-001 | Козир В. А. | null  | Поле \"Група\" не може бути порожнім"
+    })
     @DisplayName("TC-35 Студента з порожнім номером, ПІБ або групою створити не можна")
-    void rejectsBlankFields() {
-        assertThrows(IllegalArgumentException.class, () -> new DefaultStudent("", "Козир В. А.", "658п"));
-        assertThrows(IllegalArgumentException.class, () -> new DefaultStudent("KB-001", null, "658п"));
-        assertThrows(IllegalArgumentException.class, () -> new DefaultStudent("KB-001", "Козир В. А.", " "));
+    void rejectsBlankFields(String id, String fullName, String group, String message) {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new DefaultStudent(id, fullName, group));
+        assertEquals(message, e.getMessage());
     }
 
     @Test
