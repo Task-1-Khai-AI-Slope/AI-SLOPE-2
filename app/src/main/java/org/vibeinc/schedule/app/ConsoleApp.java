@@ -173,11 +173,23 @@ public final class ConsoleApp {
     }
 
     private LocalDateTime askDateTime(String prompt) {
-        return LocalDateTime.parse(ask(prompt + " у форматі " + DATE_TIME_HINT), Formats.DATE_TIME);
+        String value = ask(prompt + " у форматі " + DATE_TIME_HINT);
+        try {
+            return LocalDateTime.parse(value, Formats.DATE_TIME);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Некоректні дата й час \"" + value + "\", очікується формат " + DATE_TIME_HINT);
+        }
     }
 
     private LocalDate askDate(String prompt) {
-        return LocalDate.parse(ask(prompt + " у форматі " + DATE_HINT), Formats.DATE);
+        String value = ask(prompt + " у форматі " + DATE_HINT);
+        try {
+            return LocalDate.parse(value, Formats.DATE);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Некоректна дата \"" + value + "\", очікується формат " + DATE_HINT);
+        }
     }
 
     private int askInt(String prompt) {

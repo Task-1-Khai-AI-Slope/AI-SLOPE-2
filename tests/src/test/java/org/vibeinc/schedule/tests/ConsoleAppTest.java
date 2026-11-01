@@ -42,4 +42,13 @@ class ConsoleAppTest {
         assertTrue(output.contains("Невідомий пункт меню: 99"));
         assertTrue(output.contains("До побачення!"));
     }
+
+    @Test
+    @DisplayName("TC-24 Некоректна дата заняття – повідомлення українською, дефект #27")
+    void wrongDateTimeMessageInUkrainian() {
+        String output = run(new DefaultScheduleManagementSystem(new DefaultSchedule()),
+                "4\nGit\n1\n28.10.2026\n0\n");
+        assertTrue(output.contains("Помилка: Некоректні дата й час \"28.10.2026\""));
+        assertTrue(output.contains("До побачення!"));
+    }
 }
