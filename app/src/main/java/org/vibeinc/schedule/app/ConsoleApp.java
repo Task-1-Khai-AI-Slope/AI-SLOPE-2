@@ -4,6 +4,7 @@ import org.vibeinc.schedule.core.Lesson;
 import org.vibeinc.schedule.core.LessonType;
 import org.vibeinc.schedule.core.ScheduleException;
 import org.vibeinc.schedule.core.ScheduleManagementSystem;
+import org.vibeinc.schedule.core.Student;
 import org.vibeinc.schedule.core.Subject;
 
 import java.io.PrintStream;
@@ -29,6 +30,7 @@ public final class ConsoleApp {
             10  Виставити оцінку
             11  Оцінки студента
             12  Списки предметів і студентів
+            13  Студенти групи
              0  Вихід""";
 
     private final ScheduleManagementSystem system;
@@ -99,6 +101,7 @@ public final class ConsoleApp {
                 out.println("Студенти:");
                 system.getStudents().forEach(s -> out.println("  " + s));
             }
+            case "13" -> printGroup(ask("Група"));
             default -> out.println("Невідомий пункт меню: " + choice);
         }
     }
@@ -112,6 +115,19 @@ public final class ConsoleApp {
         grades.forEach((subject, values) -> out.printf("  %s: %s, середній бал %.1f%n",
                 subject.getName(), values,
                 system.getAverageGrade(studentId, subject.getName()).orElse(0)));
+    }
+
+    private void printGroup(String group) {
+        String key = Texts.key(group);
+        List<Student> students = system.getStudents().stream()
+                .filter(s -> Texts.key(s.getGroup()).equals(key))
+                .toList();
+        if (students.isEmpty()) {
+            out.println("У групі " + group + " студентів немає");
+            return;
+        }
+        out.println("Група " + group + ", студентів: " + students.size());
+        students.forEach(s -> out.println("  " + s));
     }
 
     private void print(List<Lesson> lessons) {
