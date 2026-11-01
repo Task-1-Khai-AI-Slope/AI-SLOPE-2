@@ -2,7 +2,6 @@ package org.vibeinc.schedule.app;
 
 import org.vibeinc.schedule.core.Student;
 
-/** Реалізація студента. Два студенти рівні, якщо збігаються номери залікових книжок. */
 public final class DefaultStudent implements Student {
     private final String id;
     private final String fullName;

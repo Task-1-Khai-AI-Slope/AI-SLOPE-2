@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * Консольний інтерфейс — ФВ-6. Потоки введення й виводу передаються ззовні,
- * щоб інтерфейс можна було перевірити тестом без клавіатури.
- */
 public final class ConsoleApp {
     private static final String MENU = """
 
@@ -45,7 +41,6 @@ public final class ConsoleApp {
         this.out = out;
     }
 
-    /** Головний цикл меню. Завершується пунктом 0 або кінцем вхідного потоку. */
     public void run() {
         while (true) {
             out.println(MENU);
@@ -57,7 +52,6 @@ public final class ConsoleApp {
             try {
                 handle(choice);
             } catch (ScheduleException | IllegalArgumentException | DateTimeParseException e) {
-                // ФВ-7: помилка не завершує програму, користувач бачить зрозуміле повідомлення.
                 out.println("Помилка: " + e.getMessage());
             }
         }
@@ -130,7 +124,6 @@ public final class ConsoleApp {
         }
     }
 
-    /** Показує загальний розклад і повертає заняття, яке вибрав користувач. */
     private Lesson chooseLesson() {
         List<Lesson> lessons = system.getSchedule().getLessons();
         print(lessons);
@@ -157,7 +150,6 @@ public final class ConsoleApp {
         return LocalDateTime.parse(ask(prompt + " у форматі РРРР-ММ-ДД ГГ:ХХ"), Formats.DATE_TIME);
     }
 
-    /** Читає ціле число. Нечислове введення дає зрозуміле повідомлення замість NumberFormatException. */
     private int askInt(String prompt) {
         String value = ask(prompt);
         try {
@@ -167,7 +159,6 @@ public final class ConsoleApp {
         }
     }
 
-    /** Виводить підказку й читає рядок. Повертає null, якщо вхідний потік закінчився. */
     private String ask(String prompt) {
         out.print(prompt + ": ");
         out.flush();

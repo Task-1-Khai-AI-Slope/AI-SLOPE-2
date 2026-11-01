@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Модель заняття з модуля core. */
 class LessonTest {
     private static final Subject GIT = new DefaultSubject("Git", "Кузнецова Ю. А.", 4);
     private static final LocalDateTime AT_10 = LocalDateTime.of(2026, 10, 28, 10, 0);

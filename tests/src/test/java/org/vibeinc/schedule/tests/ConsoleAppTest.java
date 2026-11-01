@@ -14,7 +14,6 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Консольний інтерфейс: введення подається рядком замість клавіатури. */
 class ConsoleAppTest {
 
     private static String run(ScheduleManagementSystem system, String input) {
