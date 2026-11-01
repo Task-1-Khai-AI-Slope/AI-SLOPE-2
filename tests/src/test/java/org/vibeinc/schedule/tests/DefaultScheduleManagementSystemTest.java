@@ -3,6 +3,8 @@ package org.vibeinc.schedule.tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.vibeinc.schedule.app.DefaultSchedule;
 import org.vibeinc.schedule.app.DefaultScheduleManagementSystem;
 import org.vibeinc.schedule.core.DuplicateEntityException;
@@ -94,12 +96,24 @@ class DefaultScheduleManagementSystemTest {
         assertEquals(List.of(git), system.getStudentSchedule("KB-001"));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 101, Integer.MIN_VALUE, Integer.MAX_VALUE})
     @DisplayName("TC-19 Оцінка поза межами 0–100 відхиляється")
-    void gradeOutOfRange() {
+    void gradeOutOfRange(int grade) {
         system.enroll("KB-001", "Git");
-        assertThrows(IllegalArgumentException.class, () -> system.addGrade("KB-001", "Git", 101));
-        assertThrows(IllegalArgumentException.class, () -> system.addGrade("KB-001", "Git", -1));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> system.addGrade("KB-001", "Git", grade));
+        assertEquals("Оцінка має бути в межах від 0 до 100", e.getMessage());
+        assertTrue(system.getGrades("KB-001").isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 99, 100})
+    @DisplayName("TC-67 Граничні оцінки 0–100 приймаються")
+    void gradeOnBoundary(int grade) {
+        system.enroll("KB-001", "Git");
+        system.addGrade("KB-001", "Git", grade);
+        assertEquals(grade, system.getAverageGrade("KB-001", "Git").getAsDouble(), 0.001);
     }
 
     @Test

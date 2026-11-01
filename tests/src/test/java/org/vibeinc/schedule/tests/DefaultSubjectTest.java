@@ -2,6 +2,8 @@ package org.vibeinc.schedule.tests;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.vibeinc.schedule.app.DefaultSubject;
 import org.vibeinc.schedule.core.Subject;
 
@@ -20,13 +22,21 @@ class DefaultSubjectTest {
         assertEquals(4, subject.getCredits());
     }
 
-    @Test
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', nullValues = "null", value = {
+            "null  | Викладач | 3           | Поле \"Назва предмета\" не може бути порожнім",
+            "'   ' | Викладач | 3           | Поле \"Назва предмета\" не може бути порожнім",
+            "Git   | null     | 3           | Поле \"Викладач\" не може бути порожнім",
+            "Git   | '   '    | 3           | Поле \"Викладач\" не може бути порожнім",
+            "Git   | Викладач | 0           | Кількість кредитів має бути більшою за нуль",
+            "Git   | Викладач | -1          | Кількість кредитів має бути більшою за нуль",
+            "Git   | Викладач | -2147483648 | Кількість кредитів має бути більшою за нуль"
+    })
     @DisplayName("TC-32 Порожні поля і кількість кредитів не більше нуля відхиляються")
-    void rejectsInvalidData() {
-        assertThrows(IllegalArgumentException.class, () -> new DefaultSubject(null, "Викладач", 3));
-        assertThrows(IllegalArgumentException.class, () -> new DefaultSubject("Git", "   ", 3));
-        assertThrows(IllegalArgumentException.class, () -> new DefaultSubject("Git", "Викладач", 0));
-        assertThrows(IllegalArgumentException.class, () -> new DefaultSubject("Git", "Викладач", -1));
+    void rejectsInvalidData(String name, String teacher, int credits, String message) {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new DefaultSubject(name, teacher, credits));
+        assertEquals(message, e.getMessage());
     }
 
     @Test
