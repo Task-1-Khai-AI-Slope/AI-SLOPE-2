@@ -42,12 +42,21 @@ public final class ConsoleApp {
     private final Scanner in;
     private final PrintStream out;
 
+    /**
+     * Тестові набори: макет {@code ScheduleManagementSystem}, {@code Scanner} над рядком введення
+     * і {@code PrintStream} над буфером – обидва потоки обгортає тестовий клас {@code ConsoleSession}.
+     */
     public ConsoleApp(ScheduleManagementSystem system, Scanner in, PrintStream out) {
         this.system = system;
         this.in = in;
         this.out = out;
     }
 
+    /**
+     * Тестові набори: вихід “0”, кінець введення без жодного рядка – система не викликається.
+     * Невідомий пункт меню, помилки {@code ScheduleException}, {@code IllegalArgumentException}
+     * і {@code DateTimeParseException} від макета – програма виводить “Помилка: …” і продовжує роботу.
+     */
     public void run() {
         while (true) {
             out.println(MENU);
@@ -64,6 +73,10 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: кожен пункт меню 1–14 з коректними даними, для пунктів 4–6 і 10 – некоректні
+     * номери й дати. Макет системи перевіряє, що в неї передано саме введені значення без пробілів.
+     */
     private void handle(String choice) {
         switch (choice) {
             case "1" -> {
@@ -116,6 +129,10 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: макет повертає порожній словник оцінок – виводиться “Оцінок немає”
+     * і середній бал не запитується, або кілька оцінок із середнім 82,5.
+     */
     private void printGrades(String studentId) {
         Map<Subject, List<Integer>> grades = system.getGrades(studentId);
         if (grades.isEmpty()) {
@@ -127,6 +144,9 @@ public final class ConsoleApp {
                 system.getAverageGrade(studentId, subject.getName()).orElse(0)));
     }
 
+    /**
+     * Тестові набори: група в іншому регістрі, група без студентів, студенти кількох груп.
+     */
     private void printGroup(String group) {
         String key = Texts.key(group);
         List<Student> students = system.getStudents().stream()
@@ -140,6 +160,10 @@ public final class ConsoleApp {
         students.forEach(s -> out.println("  " + s));
     }
 
+    /**
+     * Тестові набори: порожній список – “Занять немає”, кілька занять – нумерація з 1
+     * в порядку, у якому їх повернула система.
+     */
     private void print(List<Lesson> lessons) {
         if (lessons.isEmpty()) {
             out.println("Занять немає");
@@ -150,6 +174,9 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: номер першого й останнього заняття, 0, −1 і номер, більший за кількість занять.
+     */
     private Lesson chooseLesson() {
         List<Lesson> lessons = system.getSchedule().getLessons();
         print(lessons);
@@ -160,6 +187,9 @@ public final class ConsoleApp {
         return lessons.get(number - 1);
     }
 
+    /**
+     * Тестові набори: номери 1–3 для кожного {@code LessonType}, 0, 4, −1 і нечислове введення.
+     */
     private LessonType askType() {
         LessonType[] types = LessonType.values();
         for (int i = 0; i < types.length; i++) {
@@ -172,6 +202,9 @@ public final class ConsoleApp {
         return types[n - 1];
     }
 
+    /**
+     * Тестові набори: “2026-11-04 10:25”, дата без часу, дата у форматі “28.10.2026”.
+     */
     private LocalDateTime askDateTime(String prompt) {
         String value = ask(prompt + " у форматі " + DATE_TIME_HINT);
         try {
@@ -182,6 +215,9 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: “2026-10-28”, вільний день без занять, дата у форматі “28.10.2026”.
+     */
     private LocalDate askDate(String prompt) {
         String value = ask(prompt + " у форматі " + DATE_HINT);
         try {
@@ -192,6 +228,9 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: 0, додатні й від’ємні числа, слово замість числа.
+     */
     private int askInt(String prompt) {
         String value = ask(prompt);
         try {
@@ -201,6 +240,9 @@ public final class ConsoleApp {
         }
     }
 
+    /**
+     * Тестові набори: рядок з пробілами на краях, порожній рядок і кінець введення – тоді {@code null}.
+     */
     private String ask(String prompt) {
         out.print(prompt + ": ");
         out.flush();

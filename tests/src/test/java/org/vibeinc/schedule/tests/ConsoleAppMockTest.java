@@ -4,23 +4,44 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.vibeinc.schedule.core.DuplicateEntityException;
 import org.vibeinc.schedule.core.EntityNotFoundException;
+import org.vibeinc.schedule.core.Lesson;
 import org.vibeinc.schedule.core.LessonType;
+import org.vibeinc.schedule.core.Schedule;
 import org.vibeinc.schedule.core.ScheduleException;
+import org.vibeinc.schedule.core.ScheduleManagementSystem;
 
 import java.util.stream.Stream;
 
+@ExtendWith(MockitoExtension.class)
 @Disabled("Тести-пустушки – макети ще не ініціалізовано")
 class ConsoleAppMockTest {
 
+    @Mock
+    private ScheduleManagementSystem system;
+
+    @Mock
+    private Schedule schedule;
+
+    @Captor
+    private ArgumentCaptor<Lesson> lessonCaptor;
+
+    private ConsoleSession console;
+
     @BeforeEach
     void setUp() {
+        console = new ConsoleSession(system);
     }
 
     static Stream<ScheduleException> enrollErrors() {
