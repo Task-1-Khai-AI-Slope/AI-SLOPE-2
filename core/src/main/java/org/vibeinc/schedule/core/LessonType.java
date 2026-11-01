@@ -1,6 +1,5 @@
 package org.vibeinc.schedule.core;
 
-/** Вид заняття. */
 public enum LessonType {
     LECTURE("Лекція"),
     PRACTICE("Практичне"),
@@ -12,7 +11,6 @@ public enum LessonType {
         this.title = title;
     }
 
-    /** Назва виду заняття українською для виводу користувачу. */
     public String getTitle() {
         return title;
     }

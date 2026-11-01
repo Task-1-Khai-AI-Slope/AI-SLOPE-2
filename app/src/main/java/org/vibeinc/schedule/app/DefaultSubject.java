@@ -2,7 +2,6 @@ package org.vibeinc.schedule.app;
 
 import org.vibeinc.schedule.core.Subject;
 
-/** Реалізація предмета. Два предмети рівні, якщо збігаються назви без урахування регістру. */
 public final class DefaultSubject implements Subject {
     private final String name;
     private final String teacher;

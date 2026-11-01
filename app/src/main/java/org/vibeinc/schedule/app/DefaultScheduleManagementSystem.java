@@ -16,25 +16,21 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
 
-/**
- * Прототип системи керування розкладом. Дані зберігаються в пам'яті.
- * Ключі словників — рядки, нормалізовані через {@link Texts#key(String)},
- * тому пошук не залежить від регістру.
- */
 public final class DefaultScheduleManagementSystem implements ScheduleManagementSystem {
     private final Map<String, Subject> subjects = new LinkedHashMap<>();
     private final Map<String, Student> students = new LinkedHashMap<>();
-    /** Номер залікової книжки -> предмети, на які записаний студент. */
     private final Map<String, Set<Subject>> enrollments = new LinkedHashMap<>();
-    /** Номер залікової книжки -> предмет -> оцінки в порядку виставлення. */
     private final Map<String, Map<Subject, List<Integer>>> grades = new LinkedHashMap<>();
-    private final Schedule schedule = new DefaultSchedule();
+    private final Schedule schedule;
 
-    // ---------- ФВ-1. Предмети ----------
+    public DefaultScheduleManagementSystem(Schedule schedule) {
+        this.schedule = Objects.requireNonNull(schedule, "Розклад не задано");
+    }
 
     @Override
     public Subject addSubject(String name, String teacher, int credits) {
@@ -57,8 +53,6 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
         return List.copyOf(subjects.values());
     }
 
-    // ---------- ФВ-2. Студенти ----------
-
     @Override
     public Student registerStudent(String id, String fullName, String group) {
         Student student = new DefaultStudent(id, fullName, group);
@@ -80,8 +74,6 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
         return List.copyOf(students.values());
     }
 
-    // ---------- ФВ-3. Запис на предмети ----------
-
     @Override
     public void enroll(String studentId, String subjectName) {
         Student student = requireStudent(studentId);
@@ -98,8 +90,6 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
         Student student = requireStudent(studentId);
         return List.copyOf(enrollments.getOrDefault(Texts.key(student.getId()), Set.of()));
     }
-
-    // ---------- ФВ-4. Розклад ----------
 
     @Override
     public Lesson addLesson(String subjectName, LessonType type, LocalDateTime start, String room) {
@@ -126,8 +116,6 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
                 .filter(l -> Texts.key(l.subject().getTeacher()).equals(key))
                 .toList();
     }
-
-    // ---------- ФВ-5. Оцінки ----------
 
     @Override
     public void addGrade(String studentId, String subjectName, int grade) {
@@ -159,8 +147,6 @@ public final class DefaultScheduleManagementSystem implements ScheduleManagement
                 .mapToInt(Integer::intValue)
                 .average();
     }
-
-    // ---------- Допоміжні ----------
 
     private Student requireStudent(String id) {
         return findStudent(id).orElseThrow(() ->

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-/** Розклад у пам'яті з перевіркою конфліктів за аудиторією та викладачем. */
 public final class DefaultSchedule implements Schedule {
     private static final Comparator<Lesson> BY_START = Comparator.comparing(Lesson::start);
 
@@ -32,7 +31,6 @@ public final class DefaultSchedule implements Schedule {
         Objects.requireNonNull(newStart, "Новий час не задано");
         int index = indexOf(lesson);
         Lesson moved = lesson.withStart(newStart);
-        // Перевіряємо конфлікти з усіма заняттями, крім того, що переносимо.
         List<Lesson> others = new ArrayList<>(lessons);
         others.remove(index);
         checkConflicts(moved, others);
@@ -75,10 +73,6 @@ public final class DefaultSchedule implements Schedule {
         return index;
     }
 
-    /**
-     * Заняття конфліктує з іншим, якщо вони перетинаються в часі й при цьому
-     * збігається аудиторія або викладач.
-     */
     private static void checkConflicts(Lesson candidate, List<Lesson> existing) {
         for (Lesson other : existing) {
             if (!candidate.overlaps(other)) {

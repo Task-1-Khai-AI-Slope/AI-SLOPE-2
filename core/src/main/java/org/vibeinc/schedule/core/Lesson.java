@@ -4,20 +4,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * Одне заняття в розкладі. Незмінний об'єкт-значення: щоб перенести
- * заняття, створюється нова копія через {@link #withStart(LocalDateTime)}.
- *
- * @param subject  предмет
- * @param type     вид заняття
- * @param start    дата й час початку
- * @param duration тривалість, більше нуля
- * @param room     аудиторія, наприклад "301 ГАК" або "online"
- */
 public record Lesson(Subject subject, LessonType type, LocalDateTime start,
                      Duration duration, String room) {
 
-    /** Стандартна тривалість пари — 1 год 35 хв. */
     public static final Duration DEFAULT_DURATION = Duration.ofMinutes(95);
 
     public Lesson {
@@ -34,20 +23,14 @@ public record Lesson(Subject subject, LessonType type, LocalDateTime start,
         room = room.strip();
     }
 
-    /** Час завершення заняття. */
     public LocalDateTime end() {
         return start.plus(duration);
     }
 
-    /**
-     * Чи перетинаються два заняття в часі. Заняття, що закінчується
-     * рівно в момент початку іншого, перетином не вважається.
-     */
     public boolean overlaps(Lesson other) {
         return start.isBefore(other.end()) && other.start.isBefore(end());
     }
 
-    /** Копія заняття з іншим часом початку. */
     public Lesson withStart(LocalDateTime newStart) {
         return new Lesson(subject, type, newStart, duration, room);
     }

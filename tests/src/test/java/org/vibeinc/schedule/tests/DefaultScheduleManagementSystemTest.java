@@ -3,29 +3,33 @@ package org.vibeinc.schedule.tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.vibeinc.schedule.app.DefaultSchedule;
 import org.vibeinc.schedule.app.DefaultScheduleManagementSystem;
 import org.vibeinc.schedule.core.DuplicateEntityException;
 import org.vibeinc.schedule.core.EntityNotFoundException;
 import org.vibeinc.schedule.core.Lesson;
 import org.vibeinc.schedule.core.LessonType;
+import org.vibeinc.schedule.core.Schedule;
 import org.vibeinc.schedule.core.ScheduleManagementSystem;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Фасад системи: предмети, студенти, запис, особистий розклад, оцінки. */
 class DefaultScheduleManagementSystemTest {
     private static final LocalDateTime AT_10 = LocalDateTime.of(2026, 10, 28, 10, 0);
 
+    private Schedule schedule;
     private ScheduleManagementSystem system;
 
     @BeforeEach
     void setUp() {
-        system = new DefaultScheduleManagementSystem();
+        schedule = new DefaultSchedule();
+        system = new DefaultScheduleManagementSystem(schedule);
         system.addSubject("Git", "Кузнецова Ю. А.", 4);
         system.addSubject("Бази даних", "Петренко О. І.", 5);
         system.registerStudent("KB-001", "Козир В. А.", "658п");
@@ -112,5 +116,26 @@ class DefaultScheduleManagementSystemTest {
         system.addGrade("KB-001", "Git", 75);
         assertEquals(82.5, system.getAverageGrade("KB-001", "Git").getAsDouble(), 0.001);
         assertTrue(system.getAverageGrade("KB-001", "Бази даних").isEmpty());
+    }
+
+    @Test
+    @DisplayName("TC-41 Система працює саме з тим розкладом, який отримала через конструктор")
+    void usesInjectedSchedule() {
+        assertSame(schedule, system.getSchedule());
+        Lesson viaSystem = system.addLesson("Git", LessonType.LECTURE, AT_10, "301");
+        assertEquals(List.of(viaSystem), schedule.getLessons());
+
+        Lesson direct = new Lesson(system.findSubject("Бази даних").orElseThrow(),
+                LessonType.LAB, AT_10.plusHours(2), Lesson.DEFAULT_DURATION, "302");
+        schedule.addLesson(direct);
+        assertEquals(List.of(direct), system.getTeacherSchedule("Петренко О. І."));
+    }
+
+    @Test
+    @DisplayName("TC-42 Систему без розкладу створити не можна")
+    void rejectsMissingSchedule() {
+        NullPointerException e = assertThrows(NullPointerException.class,
+                () -> new DefaultScheduleManagementSystem(null));
+        assertEquals("Розклад не задано", e.getMessage());
     }
 }

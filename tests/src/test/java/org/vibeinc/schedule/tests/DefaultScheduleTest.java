@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Розклад: додавання, конфлікти, перенесення, скасування. */
 class DefaultScheduleTest {
     private static final LocalDateTime AT_10 = LocalDateTime.of(2026, 10, 28, 10, 0);
 

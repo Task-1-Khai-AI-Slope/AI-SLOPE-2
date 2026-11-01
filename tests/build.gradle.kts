@@ -1,4 +1,3 @@
-// Модуль tests: модульні тести для core і app на JUnit Jupiter.
 plugins {
     java
 }
