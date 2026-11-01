@@ -7,6 +7,7 @@ import org.vibeinc.schedule.app.Formats;
 import org.vibeinc.schedule.core.Lesson;
 import org.vibeinc.schedule.core.LessonType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
@@ -32,5 +33,12 @@ class FormatsTest {
                 LessonType.LECTURE, WEDNESDAY_10_25, Lesson.DEFAULT_DURATION, "301");
         assertEquals("2026-10-28 ср 10:25–12:00 | Git | Лекція | ауд. 301 | Кузнецова Ю. А.",
                 Formats.lesson(lesson));
+    }
+
+    @Test
+    @DisplayName("TC-30 Дата без часу виводиться з коротким днем тижня")
+    void dateWithDayOfWeek() {
+        assertEquals("2026-10-28, ср", Formats.date(LocalDate.of(2026, 10, 28)));
+        assertEquals(LocalDate.of(2026, 10, 28), LocalDate.parse("2026-10-28", Formats.DATE));
     }
 }
