@@ -8,6 +8,7 @@ import org.vibeinc.schedule.core.Student;
 import org.vibeinc.schedule.core.Subject;
 
 import java.io.PrintStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -31,7 +32,11 @@ public final class ConsoleApp {
             11  Оцінки студента
             12  Списки предметів і студентів
             13  Студенти групи
+            14  Розклад на дату
              0  Вихід""";
+
+    private static final String DATE_HINT = "РРРР-ММ-ДД";
+    private static final String DATE_TIME_HINT = "РРРР-ММ-ДД ГГ:ХХ";
 
     private final ScheduleManagementSystem system;
     private final Scanner in;
@@ -102,6 +107,11 @@ public final class ConsoleApp {
                 system.getStudents().forEach(s -> out.println("  " + s));
             }
             case "13" -> printGroup(ask("Група"));
+            case "14" -> {
+                LocalDate date = askDate("Дата");
+                out.println("Розклад на " + Formats.date(date) + ":");
+                print(system.getSchedule().getLessonsOn(date));
+            }
             default -> out.println("Невідомий пункт меню: " + choice);
         }
     }
@@ -163,7 +173,11 @@ public final class ConsoleApp {
     }
 
     private LocalDateTime askDateTime(String prompt) {
-        return LocalDateTime.parse(ask(prompt + " у форматі РРРР-ММ-ДД ГГ:ХХ"), Formats.DATE_TIME);
+        return LocalDateTime.parse(ask(prompt + " у форматі " + DATE_TIME_HINT), Formats.DATE_TIME);
+    }
+
+    private LocalDate askDate(String prompt) {
+        return LocalDate.parse(ask(prompt + " у форматі " + DATE_HINT), Formats.DATE);
     }
 
     private int askInt(String prompt) {
